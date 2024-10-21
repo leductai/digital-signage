@@ -1,5 +1,4 @@
 ## DigitalSignage
-localhost:3000/api/v1/user/demo
 *📺 Simple self-hosted digital signage software for turning screens into beautiful content displays*
 
 ![Outdated Dependencies](https://david-dm.org/wassgha/digital-signage.svg) ![Travis Build](https://travis-ci.org/wassgha/digital-signage.svg?branch=master)
@@ -48,6 +47,9 @@ Assuming the software was cloned from this github repository, it is possible to 
 ```bash
 npm run update
 ```
+
+### Create user demo
+Access to http://localhost:3000/api/v1/user/demo
 
 which pulls the latest stable version of `digital-signage` from github, installs dependencies and re-builds the software.
 
