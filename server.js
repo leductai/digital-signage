@@ -71,12 +71,26 @@ app
     // API routes
     server.use('/api/v1', apiRoutes)
 
+    // Test route
+    server.get('/test', (req, res) => {
+      res.json({ message: 'Test route works!' })
+    })
+
     // Static routes
     server.use('/uploads', express.static('uploads'))
 
     // Next.js routes
     server.get('*', (req, res) => {
       return handle(req, res)
+    })
+
+    server.get('/test-server', (req, res) => {
+      res.json({ message: 'Test route from server works!' })
+    })
+
+    // Thêm route test này
+    server.get('/test-express', (req, res) => {
+      res.json({ message: 'Express route works!' })
     })
 
     const finalServer = server.listen(Keys.PORT, err => {
