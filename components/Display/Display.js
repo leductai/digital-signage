@@ -32,8 +32,12 @@ class Display extends React.Component {
 
   componentDidMount() {
     this.refresh()
-    const { host = 'http://localhost' } = this.props
-    const socket = socketIOClient(host)
+    // On the client, always use the current origin for the socket host
+    const socketHost =
+      typeof window !== 'undefined'
+        ? window.location.origin
+        : this.props.host || 'http://localhost'
+    const socket = socketIOClient(socketHost)
     socket.on('admin:update', () => this.throttledRefresh())
   }
 
@@ -42,8 +46,10 @@ class Display extends React.Component {
   }
 
   refresh = () => {
-    const { display, host = '' } = this.props
-    return getDisplay(display, host)
+    const { display } = this.props
+    // On the client, calling without host uses the current origin,
+    // which ensures we don't accidentally call localhost in production.
+    return getDisplay(display)
       .then(({ widgets = [], layout, statusBar = DEFAULT_STATUS_BAR }) => {
         this.setState({ widgets, layout, statusBar })
       })
