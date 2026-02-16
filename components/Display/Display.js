@@ -42,10 +42,15 @@ class Display extends React.Component {
   }
 
   refresh = () => {
-    const { display } = this.props
-    return getDisplay(display).then(({ widgets = [], layout, statusBar = DEFAULT_STATUS_BAR }) => {
-      this.setState({ widgets, layout, statusBar })
-    })
+    const { display, host = '' } = this.props
+    return getDisplay(display, host)
+      .then(({ widgets = [], layout, statusBar = DEFAULT_STATUS_BAR }) => {
+        this.setState({ widgets, layout, statusBar })
+      })
+      .catch(error => {
+        console.error('Error refreshing display:', error.message)
+        // Keep current state on error
+      })
   }
 
   render() {

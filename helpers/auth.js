@@ -31,10 +31,15 @@ export const protect = Component =>
     static async getInitialProps(ctx) {
       const { req, res, query } = ctx
       const alreadyLoggedIn = parseCookies(ctx).loggedIn
-      const host =
-        req && req.headers && req.headers.host
-          ? 'http://' + req.headers.host
-          : window.location.origin
+      let host
+      if (req) {
+        // Server-side: use localhost to avoid external domain resolution issues
+        const Keys = require('../keys')
+        host = `http://localhost:${Keys.PORT}`
+      } else {
+        // Client-side: use current origin
+        host = typeof window !== 'undefined' ? window.location.origin : ''
+      }
 
       if ((req && req.user) || alreadyLoggedIn) {
         if (!alreadyLoggedIn) {
@@ -47,8 +52,14 @@ export const protect = Component =>
         let displayId = query && query.display
 
         if (!displayId) {
-          const displayList = await getDisplays(host)
-          displayId = displayList[0]._id
+          try {
+            const displayList = await getDisplays(host)
+            if (displayList && displayList.length > 0) {
+              displayId = displayList[0]._id
+            }
+          } catch (error) {
+            console.error('Error fetching displays:', error.message)
+          }
         }
 
         const props = Component.getInitialProps ? await Component.getInitialProps({ ...ctx }) : {}

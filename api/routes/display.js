@@ -32,11 +32,19 @@ router
       .catch(err => next(err))
   })
 
+  // Helper function to validate ObjectId
+const isValidObjectId = (id) => {
+  if (!id || id === 'null' || id === 'undefined' || typeof id !== 'string') {
+    return false
+  }
+  return mongoose.Types.ObjectId.isValid(id)
+}
+
 // Route: /api/v1/display/:id
 router
   .get('/:id', (req, res, next) => {
     const { id } = req.params
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!isValidObjectId(id)) {
       return res.status(400).json({ error: 'Invalid display id' })
     }
     return Display.findById(id)
@@ -48,7 +56,7 @@ router
   })
   .get('/:id/widgets', (req, res, next) => {
     const { id } = req.params
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!isValidObjectId(id)) {
       return res.status(400).json({ error: 'Invalid display id' })
     }
     return Display.findById(id)
@@ -60,7 +68,7 @@ router
   })
   .delete('/:id', (req, res, next) => {
     const { id } = req.params
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!isValidObjectId(id)) {
       return res.status(400).json({ error: 'Invalid display id' })
     }
     return Display.findByIdAndDelete(id)
@@ -74,7 +82,7 @@ router
   })
   .patch('/:id', (req, res, next) => {
     const { id } = req.params
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!isValidObjectId(id)) {
       return res.status(400).json({ error: 'Invalid display id' })
     }
     return Display.findById(id)

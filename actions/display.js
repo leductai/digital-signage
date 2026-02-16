@@ -1,11 +1,18 @@
 import axios from 'axios'
 
 export const getDisplays = (host = '') => {
-  return axios.get(host + '/api/v1/display').then(res => {
-    if (res && res.data) {
-      return res.data
-    }
-  })
+  return axios
+    .get(host + '/api/v1/display')
+    .then(res => {
+      if (res && res.data) {
+        return res.data
+      }
+      return []
+    })
+    .catch(error => {
+      console.error('Error fetching displays:', error.message)
+      throw error
+    })
 }
 
 export const addDisplay = (host = '') => {
@@ -17,11 +24,18 @@ export const addDisplay = (host = '') => {
 }
 
 export const getDisplay = (id, host = '') => {
-  return axios.get(host + '/api/v1/display/' + id).then(res => {
-    if (res && res.data) {
-      return res.data
-    }
-  })
+  return axios
+    .get(host + '/api/v1/display/' + id)
+    .then(res => {
+      if (res && res.data) {
+        return res.data
+      }
+      return null
+    })
+    .catch(error => {
+      console.error('Error fetching display:', error.message)
+      throw error
+    })
 }
 
 export const deleteDisplay = (id, host = '') => {

@@ -16,8 +16,15 @@ class DisplayPage extends React.Component {
 
   static async getInitialProps({ query, req }) {
     const displayId = query && query.display
-    const host =
-      req && req.headers && req.headers.host ? 'http://' + req.headers.host : window.location.origin
+    let host
+    if (req) {
+      // Server-side: use localhost to avoid external domain resolution issues
+      const Keys = require('../keys')
+      host = `http://localhost:${Keys.PORT}`
+    } else {
+      // Client-side: use current origin
+      host = typeof window !== 'undefined' ? window.location.origin : ''
+    }
 
     return { host, displayId }
   }

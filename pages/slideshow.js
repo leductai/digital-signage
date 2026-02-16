@@ -30,10 +30,22 @@ class Slideshow extends React.Component {
 
   static async getInitialProps({ query, req }) {
     const id = query && query.id
-    const host =
-      req && req.headers && req.headers.host ? 'http://' + req.headers.host : window.location.origin
-    const slideshow = id && (await getSlideshow(id, host))
-    return { slideshow, host }
+    let host
+    if (req) {
+      // Server-side: use localhost to avoid external domain resolution issues
+      const Keys = require('../keys')
+      host = `http://localhost:${Keys.PORT}`
+    } else {
+      // Client-side: use current origin
+      host = typeof window !== 'undefined' ? window.location.origin : ''
+    }
+    try {
+      const slideshow = id && (await getSlideshow(id, host))
+      return { slideshow, host }
+    } catch (error) {
+      console.error('Error fetching slideshow:', error.message)
+      return { slideshow: null, host }
+    }
   }
 
   componentDidMount() {

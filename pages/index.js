@@ -15,10 +15,22 @@ class Index extends React.Component {
   }
 
   static async getInitialProps({ req }) {
-    const host =
-      req && req.headers && req.headers.host ? 'http://' + req.headers.host : window.location.origin
-    const displayList = await getDisplays(host)
-    return { displays: displayList, host: host }
+    let host
+    if (req) {
+      // Server-side: use localhost to avoid external domain resolution issues
+      const Keys = require('../keys')
+      host = `http://localhost:${Keys.PORT}`
+    } else {
+      // Client-side: use current origin
+      host = typeof window !== 'undefined' ? window.location.origin : ''
+    }
+    try {
+      const displayList = await getDisplays(host)
+      return { displays: displayList || [], host: host }
+    } catch (error) {
+      console.error('Error fetching displays:', error.message)
+      return { displays: [], host: host }
+    }
   }
 
   navigateToDisplay = id => {
